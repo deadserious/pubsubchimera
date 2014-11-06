@@ -24,6 +24,7 @@
 <div class="large-9 columns" role="content">
 <article>
 <h3><a href="#" id="chat_header">Messages</a></h3>
+<div class="row"><div class="large-2 columns"><h5>Username</h5></div><div class="large-10 columns"><h5>Message</h5></div></div>
 <div class="row">
 <div class="large-12 columns" id="chat_content">
 </div>
@@ -63,13 +64,13 @@
 		  if (user == '') { 
 		    user = 'Anonymous:';
 		  }
-		  $.post('/pubsub',user+': '+$('#message').val());
+		  var obj = {user : user, message : $('#message').val()};
+		  $.post('/pubsub',JSON.stringify(obj));
 		});
 		
-		var poller = function(data) {
-		  var ary = JSON.parse(data);
+		var poller = function(ary) {
 		  for(var i = 0; i < ary.length; i++) {
-		    $('#chat_content').prepend('<div class="row"><div class="large-12 columns">'+ary[i]+'</div></div>');
+		    $('#chat_content').prepend('<div class="row"><div class="large-2 columns">'+ary[i].user+'</div><div class="large-10 columns">'+ary[i].message+'</div></div>');
 		  }
   		  $.get('/pubsub', '', poller);
 		};

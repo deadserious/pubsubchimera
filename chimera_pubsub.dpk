@@ -1,4 +1,4 @@
-package pubsubChimera;
+package chimera_pubsub;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -29,10 +29,15 @@ package pubsubChimera;
 
 requires
   rtl,
-  inet;
+  inet,
+  IndySystem,
+  IndyProtocols,
+  IndyCore;
 
 contains
   chimera.pubsub in 'chimera.pubsub.pas',
-  chimera.pubsub.producer in 'chimera.pubsub.producer.pas';
+  chimera.pubsub.producer in 'chimera.pubsub.producer.pas',
+  chimera.pubsub.server.idhttp in 'chimera.pubsub.server.idhttp.pas',
+  chimera.pubsub.common in 'chimera.pubsub.common.pas';
 
 end.

@@ -34,23 +34,24 @@ unit chimera.pubsub.producer;
 interface
 
 uses
-  System.SysUtils, System.Classes, Web.HTTPApp;
+  System.SysUtils, System.Classes, Web.HTTPApp, chimera.json, chimera.pubsub.common;
 
 type
-  TSessionEvent = procedure(Sender : TObject; var SessionID : string) of object;
-  TPubSubAuthEvent = procedure(Sender : TObject; const channel : string; var Permitted : boolean) of object;
-  TParseEvent = procedure(Sender : TObject; Request : TWebRequest; var Value : string) of object;
+  TSessionEvent = procedure(Sender : TObject; Request : TWebRequest; Response : TWebResponse; var SessionID : string) of object;
+  TPubSubAuthEvent = procedure(Sender : TObject; Request : TWebRequest; const channel : string; var Permitted : boolean) of object;
+  TParseChannelEvent = procedure(Sender : TObject; Request : TWebRequest; var Value : string) of object;
+  TParseDataEvent = procedure(Sender : TObject; Request : TWebRequest; var Value : IJSONObject) of object;
   TPubSubProducer = class(TCustomContentProducer)
   private
     FOnSession: TSessionEvent;
     FOnCanSubscribe: TPubSubAuthEvent;
     FOnCanPublish: TPubSubAuthEvent;
-    FOnParseMessage: TParseEvent;
-    FOnParseChannel: TParseEvent;
+    FOnParseMessage: TParseDataEvent;
+    FOnParseChannel: TParseChannelEvent;
     FTimeout: integer;
   protected
     function ParseChannel : string; virtual;
-    function ParseMessage : string; virtual;
+    function ParseMessage : IJSONObject; virtual;
     function CanPublish : boolean;
     function CanSubscribe : boolean;
   public
@@ -61,8 +62,8 @@ type
     property OnSession : TSessionEvent read FOnSession write FOnSession;
     property OnCanSubscribe : TPubSubAuthEvent read FOnCanSubscribe write FOnCanSubscribe;
     property OnCanPublish : TPubSubAuthEvent read FOnCanPublish write FOnCanPublish;
-    property OnParseChannel : TParseEvent read FOnParseChannel write FOnParseChannel;
-    property OnParseMessage : TParseEvent read FOnParseMessage write FOnParseMessage;
+    property OnParseChannel : TParseChannelEvent read FOnParseChannel write FOnParseChannel;
+    property OnParseMessage : TParseDataEvent read FOnParseMessage write FOnParseMessage;
   end;
 
 procedure Register;
@@ -82,47 +83,54 @@ function TPubSubProducer.CanPublish: boolean;
 begin
   Result := True;
   if Assigned(FOnCanPublish) then
-    FOnCanPublish(Self, ParseChannel, Result);
+    FOnCanPublish(Self, Dispatcher.Request, ParseChannel, Result);
 end;
 
 function TPubSubProducer.CanSubscribe: boolean;
 begin
   Result := True;
   if Assigned(FOnCanSubscribe) then
-    FOnCanSubscribe(Self, ParseChannel, Result);
+    FOnCanSubscribe(Self, Dispatcher.Request, ParseChannel, Result);
 end;
 
 function TPubSubProducer.Content: string;
 var
   sSession : string;
-  ary: TArray<string>;
+  ary: TArray<IJSONObject>;
+  jsa : IJSONArray;
   i: Integer;
 begin
-      case Dispatcher.Request.MethodType of
+  case Dispatcher.Request.MethodType of
     TMethodType.mtPost,
     TMethodType.mtPut:
       if CanPublish then
-        TPubSub<string>.Publish(ParseChannel, ParseMessage);
+        TPubSub<IJSONObject>.Publish(ParseChannel, ParseMessage)
+      else
+        raise EPubSubSecurityException.Create(NOT_ALLOWED);
     TMethodType.mtGet:
     begin
       if CanSubscribe then
       begin
         sSession := '';
+        jsa := JSONArray;
         if Assigned(FOnSession) then
         begin
-          FOnSession(Self, sSession);
-          ary := TPubSub<String>.ListenAndWait(ParseChannel, sSession, FTimeout);
-          result := '[';
-          for i := 0 to length(ary) do
+          // If a session is provided, then use queueing mechanism
+          FOnSession(Self, Dispatcher.Request, Dispatcher.Response, sSession);
+          ary := TPubSub<IJSONObject>.ListenAndWait(ParseChannel, sSession, FTimeout);
+          for i := 0 to length(ary)-1 do
           begin
-            if i > 0 then
-              result := result+',';
-            result := result+'"'+ary[i].Replace('"','''',[rfReplaceAll]);
+            jsa.Add(ary[i]);
           end;
-          result := result+']';
         end else
-          result := '["'+TPubSub<string>.ListenAndWait(ParseChannel, FTimeout).Replace('"','''',[rfReplaceAll])+'"]';
-      end;
+        begin
+          // If no session provided, just wait for next message
+          jsa.Add(TPubSub<IJSONObject>.ListenAndWait(ParseChannel, FTimeout));
+        end;
+        Result := jsa.AsJSON;
+        Dispatcher.Response.ContentType := 'application/json';
+      end else
+        raise EPubSubSecurityException.Create(NOT_ALLOWED);
     end;
   end;
 
@@ -141,9 +149,9 @@ begin
     FOnParseChannel(Self, Dispatcher.Request, Result);
 end;
 
-function TPubSubProducer.ParseMessage: string;
+function TPubSubProducer.ParseMessage: IJSONObject;
 begin
-  Result := Dispatcher.Request.Content;
+  Result := JSON(Dispatcher.Request.Content);
   if Assigned(FOnParseMessage) then
     FOnParseMessage(Self, Dispatcher.Request, Result);
 end;
