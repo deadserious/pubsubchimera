@@ -51,6 +51,8 @@ type
   protected
     function ParseChannel : string; virtual;
     function ParseMessage : string; virtual;
+    function CanPublish : boolean;
+    function CanSubscribe : boolean;
   public
     constructor Create(AOwner: TComponent); override;
     function Content: string; override;
@@ -76,6 +78,20 @@ end;
 
 { TPubSubProducer }
 
+function TPubSubProducer.CanPublish: boolean;
+begin
+  Result := True;
+  if Assigned(FOnCanPublish) then
+    FOnCanPublish(Self, ParseChannel, Result);
+end;
+
+function TPubSubProducer.CanSubscribe: boolean;
+begin
+  Result := True;
+  if Assigned(FOnCanSubscribe) then
+    FOnCanSubscribe(Self, ParseChannel, Result);
+end;
+
 function TPubSubProducer.Content: string;
 var
   sSession : string;
@@ -85,24 +101,28 @@ begin
       case Dispatcher.Request.MethodType of
     TMethodType.mtPost,
     TMethodType.mtPut:
-      TPubSub<string>.Publish(ParseChannel, ParseMessage);
+      if CanPublish then
+        TPubSub<string>.Publish(ParseChannel, ParseMessage);
     TMethodType.mtGet:
     begin
-      sSession := '';
-      if Assigned(FOnSession) then
+      if CanSubscribe then
       begin
-        FOnSession(Self, sSession);
-        ary := TPubSub<String>.ListenAndWait(ParseChannel, sSession, FTimeout);
-        result := '[';
-        for i := 0 to length(ary) do
+        sSession := '';
+        if Assigned(FOnSession) then
         begin
-          if i > 0 then
-            result := result+',';
-          result := result+'"'+ary[i].Replace('"','''',[rfReplaceAll]);
-        end;
-        result := result+']';
-      end else
-        result := '["'+TPubSub<string>.ListenAndWait(ParseChannel, FTimeout).Replace('"','''',[rfReplaceAll])+'"]';
+          FOnSession(Self, sSession);
+          ary := TPubSub<String>.ListenAndWait(ParseChannel, sSession, FTimeout);
+          result := '[';
+          for i := 0 to length(ary) do
+          begin
+            if i > 0 then
+              result := result+',';
+            result := result+'"'+ary[i].Replace('"','''',[rfReplaceAll]);
+          end;
+          result := result+']';
+        end else
+          result := '["'+TPubSub<string>.ListenAndWait(ParseChannel, FTimeout).Replace('"','''',[rfReplaceAll])+'"]';
+      end;
     end;
   end;
 
