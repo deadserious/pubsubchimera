@@ -69,7 +69,7 @@
 		var poller = function(data) {
 		  var ary = JSON.parse(data);
 		  for(var i = 0; i < ary.length; i++) {
-		    $('#chat_content').append('<div class="row"><div class="large-12 columns">'+ary[i]+'</div></div>');
+		    $('#chat_content').prepend('<div class="row"><div class="large-12 columns">'+ary[i]+'</div></div>');
 		  }
   		  $.get('/pubsub', '', poller);
 		};
