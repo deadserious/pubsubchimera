@@ -1,0 +1,80 @@
+
+<!doctype html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" data-useragent="Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chat Test for PubSub Chimera</title>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/css/foundation.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/modernizr.js"></script>
+</head>
+<body>
+ 
+<div class="row">
+<div class="large-12 columns">
+<h1>Chat</h1>
+<hr/>
+</div>
+</div>
+ 
+ 
+<div class="row">
+ 
+<div class="large-9 columns" role="content">
+<article>
+<h3><a href="#" id="chat_header">Messages</a></h3>
+<div class="row">
+<div class="large-12 columns" id="chat_content">
+</div>
+</div>
+</article>
+</div>
+ 
+ 
+<aside class="large-3 columns">
+<input type="text" placeholder="username" value="" id="username"/> 
+<input type="text" placeholder="message" value="" id="message"/> 
+<button id="send">Send</button>
+</aside>
+</div>
+ 
+ 
+<footer class="row">
+<div class="large-12 columns">
+<hr/>
+<div class="row">
+<div class="large-12 columns">
+<p>&copy; Copyright 2014 by Sivv Corp.</p>
+</div>
+</div>
+</div>
+</footer>
+<script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/vendor/jquery.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/foundation/5.4.7/js/foundation/foundation.js"></script>
+<script>
+      $(document).foundation();
+
+      var doc = document.documentElement;
+      doc.setAttribute('data-useragent', navigator.userAgent);
+	  $(function() {
+		$('#send').on('click',function() {
+		  var user = $('#username').val();
+		  if (user == '') { 
+		    user = 'Anonymous:';
+		  }
+		  $.post('/pubsub',user+': '+$('#message').val());
+		});
+		
+		var poller = function(data) {
+		  var ary = JSON.parse(data);
+		  for(var i = 0; i < ary.length; i++) {
+		    $('#chat_content').append('<div class="row"><div class="large-12 columns">'+ary[i]+'</div></div>');
+		  }
+  		  $.get('/pubsub', '', poller);
+		};
+		$.get('/pubsub', '', poller);
+	  });
+    </script>
+</body>
+</html>

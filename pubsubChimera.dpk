@@ -28,9 +28,11 @@ package pubsubChimera;
 {$IMPLICITBUILD ON}
 
 requires
-  rtl;
+  rtl,
+  inet;
 
 contains
-  chimera.pubsub in 'chimera.pubsub.pas';
+  chimera.pubsub in 'chimera.pubsub.pas',
+  chimera.pubsub.producer in 'chimera.pubsub.producer.pas';
 
 end.

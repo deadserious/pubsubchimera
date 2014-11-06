@@ -1,36 +1,16 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{CE1996DB-2959-4B0C-AA26-6A239A993228}</ProjectGuid>
+        <ProjectGuid>{2C7C2F0F-4B62-47AB-960F-884AF712161A}</ProjectGuid>
         <ProjectVersion>15.4</ProjectVersion>
-        <FrameworkType>None</FrameworkType>
-        <MainSource>SimpleTest.dpr</MainSource>
+        <FrameworkType>VCL</FrameworkType>
+        <MainSource>pubsubChatServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
-        <AppType>Console</AppType>
+        <AppType>Application</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Android' and '$(Base)'=='true') or '$(Base_Android)'!=''">
-        <Base_Android>true</Base_Android>
-        <CfgParent>Base</CfgParent>
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='iOSDevice' and '$(Base)'=='true') or '$(Base_iOSDevice)'!=''">
-        <Base_iOSDevice>true</Base_iOSDevice>
-        <CfgParent>Base</CfgParent>
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='iOSSimulator' and '$(Base)'=='true') or '$(Base_iOSSimulator)'!=''">
-        <Base_iOSSimulator>true</Base_iOSSimulator>
-        <CfgParent>Base</CfgParent>
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Base)'=='true') or '$(Base_OSX32)'!=''">
-        <Base_OSX32>true</Base_OSX32>
-        <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
@@ -60,44 +40,31 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <SanitizedProjectName>SimpleTest</SanitizedProjectName>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UnitSearchPath>..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <SanitizedProjectName>pubsubChatServer</SanitizedProjectName>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_ExeOutput>.\</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Android)'!=''">
-        <Android_LauncherIcon48>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_48x48.png</Android_LauncherIcon48>
-        <DCC_UsePackage>JvGlobus;JvMM;JvManagedThreads;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;DBXSqliteDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;JvNet;DataSnapProviderClient;DbxCommonDriver;dbxcds;JvXPCtrls;fmxFireDAC;CustomIPTransport;JvCore;dsnap;IndyIPServer;IndyCore;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;dsnapxml;JvDocking;JvWizards;JvHMI;bindcompfmx;JvBands;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;JvPluginSystem;JvCmp;JvSystem;xmlrtl;DataSnapNativeClient;ibxpress;JvControls;JvTimeFramework;IndyProtocols;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;FMXTee;JvStdCtrls;JvCustom;JvJans;JvPrintPreview;JvPageComps;FireDAC;inet;soapmidas;RESTComponents;dbexpress;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <Android_LauncherIcon144>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_144x144.png</Android_LauncherIcon144>
-        <Android_LauncherIcon72>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_72x72.png</Android_LauncherIcon72>
-        <Android_LauncherIcon36>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_36x36.png</Android_LauncherIcon36>
-        <Android_LauncherIcon96>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_96x96.png</Android_LauncherIcon96>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_iOSDevice)'!=''">
-        <DCC_UsePackage>JvGlobus;JvMM;JvManagedThreads;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;DBXSqliteDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;JvNet;DataSnapProviderClient;DbxCommonDriver;dbxcds;JvXPCtrls;fmxFireDAC;CustomIPTransport;JvCore;dsnap;IndyIPServer;fmxase;IndyCore;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;dsnapxml;JvDocking;JvWizards;JvHMI;bindcompfmx;JvBands;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;JvPluginSystem;JvCmp;JvSystem;xmlrtl;DataSnapNativeClient;ibxpress;JvControls;JvTimeFramework;IndyProtocols;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;FMXTee;JvStdCtrls;JvCustom;JvJans;JvPrintPreview;JvPageComps;FireDAC;inet;soapmidas;RESTComponents;dbexpress;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_iOSSimulator)'!=''">
-        <DCC_UsePackage>JvGlobus;JvMM;JvManagedThreads;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;DBXSqliteDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;JvNet;DataSnapProviderClient;DbxCommonDriver;dbxcds;JvXPCtrls;fmxFireDAC;CustomIPTransport;JvCore;dsnap;IndyIPServer;fmxase;IndyCore;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;dsnapxml;JvDocking;JvWizards;JvHMI;bindcompfmx;JvBands;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;JvPluginSystem;JvCmp;JvSystem;xmlrtl;DataSnapNativeClient;ibxpress;JvControls;JvTimeFramework;IndyProtocols;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;FMXTee;JvStdCtrls;JvCustom;JvJans;JvPrintPreview;JvPageComps;FireDAC;inet;soapmidas;RESTComponents;dbexpress;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_OSX32)'!=''">
-        <DCC_UsePackage>JvGlobus;JvMM;JvManagedThreads;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;DBXSqliteDriver;FireDACPgDriver;fmx;JvDlgs;IndySystem;JvCrypt;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;JvNet;DataSnapProviderClient;DbxCommonDriver;dbxcds;JvXPCtrls;fmxFireDAC;DBXOracleDriver;CustomIPTransport;JvCore;dsnap;IndyIPServer;fmxase;IndyCore;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;inetdbxpress;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;JvDocking;JvWizards;FireDACASADriver;FIBPlus_XE4;JvHMI;bindcompfmx;JvBands;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;JvPluginSystem;JvCmp;JvSystem;xmlrtl;DataSnapNativeClient;ibxpress;JvControls;JvTimeFramework;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;FMXTee;JvStdCtrls;JvCustom;JvJans;JvPrintPreview;JvPageComps;FireDACADSDriver;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;DataSnapServerMidas;DBXFirebirdDriver;inet;fmxobj;FireDACMySQLDriver;soapmidas;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>Olaf;JvGlobus;FECCardReaderD2007;JvMM;JvManagedThreads;rbRTL1520;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;ideal.fmx;DBXSqliteDriver;FireDACPgDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;TeeDB;tethering;rbDAD1520;dclRBADO1520;rbTDBC1520;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;JvNet;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;dclRBIBE1520;dbxcds;DatasnapConnectorsFreePascal;MetropolisUILiveTile;JvXPCtrls;SynEdit_RXE6;ISSUtilitiesXE6;rbIDE1520;vcldb;rbRIDE1520;vcldsnap;rbDB1520;fmxFireDAC;rbRCL1520;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;JvCore;rbFireDAC1520;vclribbon;rbDIDE1520;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DCEF_XE5;MissingStyles;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;CodeSiteExpressPkg;tmsxlsdXE6;VirtualDBTreeEx_XE6;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;inetdbxpress;WACEF;dsnapxml;tmsdXE6;FireDACInfxDriver;FireDACDb2Driver;JclDeveloperTools;JvDocking;adortl;dclRBFireDAC1520;rbADO1520;JvWizards;FireDACASADriver;FIBPlus_XE4;JvHMI;rbBDE1520;ISSSQLUtilsFireDACXE6;bindcompfmx;JvBands;vcldbx;rbDBE1520;FireDACODBCDriver;RESTBackendComponents;rbRAP1520;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;JvPluginSystem;Tee;JclContainers;rbIBE1520;DBXOdbcDriver;acQueryBuilderFireDACD19;vclFireDAC;JvCmp;dclRBBDE1520;JvSystem;xmlrtl;DataSnapNativeClient;svnui;ibxpress;JvControls;JvTimeFramework;rbDBDE1520;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;rb;tmswizdXE6;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvJans;JvPrintPreview;JvPageComps;FECPersonPanel;FireDACADSDriver;vcltouch;rbTCUI1520;dclRBE1520;dclRBDBE1520;IdealFECButtonPkg;VclSmp;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;ISSFormsXE6;inet;rbCIDE1520;fmxobj;JclVcl;FireDACMySQLDriver;soapmidas;vclx;tmsexdXE6;rbTC1520;svn;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;acQueryBuilderDsgnFireDACD19;dbisamr;bdertl;VirtualTreesR;edbrun;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_UsePackage>Olaf;JvGlobus;FECCardReaderD2007;JvMM;JvManagedThreads;rbRTL1520;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;ideal.fmx;DBXSqliteDriver;FireDACPgDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;TeeDB;tethering;rbDAD1520;dclRBADO1520;rbTDBC1520;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;JvNet;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;dclRBIBE1520;dbxcds;DatasnapConnectorsFreePascal;MetropolisUILiveTile;JvXPCtrls;SynEdit_RXE6;ISSUtilitiesXE6;rbIDE1520;vcldb;rbRIDE1520;vcldsnap;rbDB1520;fmxFireDAC;rbRCL1520;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;JvCore;rbFireDAC1520;vclribbon;rbDIDE1520;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DCEF_XE5;MissingStyles;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;CodeSiteExpressPkg;tmsxlsdXE6;VirtualDBTreeEx_XE6;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;inetdbxpress;WACEF;dsnapxml;tmsdXE6;FireDACInfxDriver;FireDACDb2Driver;JclDeveloperTools;JvDocking;adortl;dclRBFireDAC1520;rbADO1520;JvWizards;FireDACASADriver;FIBPlus_XE4;JvHMI;rbBDE1520;ISSSQLUtilsFireDACXE6;bindcompfmx;JvBands;vcldbx;rbDBE1520;FireDACODBCDriver;RESTBackendComponents;rbRAP1520;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;JvPluginSystem;Tee;JclContainers;rbIBE1520;DBXOdbcDriver;acQueryBuilderFireDACD19;vclFireDAC;JvCmp;dclRBBDE1520;JvSystem;xmlrtl;DataSnapNativeClient;svnui;ibxpress;JvControls;JvTimeFramework;rbDBDE1520;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;rb;tmswizdXE6;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvJans;JvPrintPreview;JvPageComps;FECPersonPanel;FireDACADSDriver;vcltouch;rbTCUI1520;dclRBE1520;dclRBDBE1520;IdealFECButtonPkg;VclSmp;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;ISSFormsXE6;inet;rbCIDE1520;fmxobj;JclVcl;FireDACMySQLDriver;soapmidas;vclx;tmsexdXE6;rbTC1520;svn;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;acQueryBuilderDsgnFireDACD19;dbisamr;bdertl;VirtualTreesR;edbrun;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>JvGlobus;JvMM;JvManagedThreads;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;DBXSqliteDriver;FireDACPgDriver;fmx;JvDlgs;IndySystem;JvCrypt;TeeDB;tethering;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;JvNet;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;dbxcds;DatasnapConnectorsFreePascal;MetropolisUILiveTile;JvXPCtrls;SynEdit_RXE6;vcldb;vcldsnap;fmxFireDAC;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;JvCore;vclribbon;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;inetdbxpress;dsnapxml;tmsdXE6;FireDACInfxDriver;FireDACDb2Driver;JclDeveloperTools;JvDocking;adortl;JvWizards;FireDACASADriver;FIBPlus_XE4;JvHMI;bindcompfmx;JvBands;FireDACODBCDriver;RESTBackendComponents;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;JvPluginSystem;Tee;JclContainers;DBXOdbcDriver;acQueryBuilderFireDACD19;vclFireDAC;JvCmp;JvSystem;xmlrtl;DataSnapNativeClient;ibxpress;JvControls;JvTimeFramework;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvJans;JvPrintPreview;JvPageComps;FireDACADSDriver;vcltouch;VclSmp;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;inet;fmxobj;JclVcl;FireDACMySQLDriver;soapmidas;vclx;tmsexdXE6;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;acQueryBuilderDsgnFireDACD19;VirtualTreesR;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -109,9 +76,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_ExeOutput>.\</DCC_ExeOutput>
-        <Manifest_File>None</Manifest_File>
-        <DCC_UnitSearchPath>..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -124,7 +89,15 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="chimera.pubsub.test.simple.pas"/>
+        <DCCReference Include="chimera.pubsub.test.form.pas">
+            <Form>Form1</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="chimera.pubsub.test.module.pas">
+            <Form>WebModule1</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TWebModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -143,7 +116,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">SimpleTest.dpr</Source>
+                    <Source Name="MainSource">pubsubChatServer.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclVcl200.bpl">JEDI Code Library VCL package</Excluded_Packages>
@@ -182,10 +155,6 @@
             </Delphi.Personality>
             <Deployment/>
             <Platforms>
-                <Platform value="Android">False</Platform>
-                <Platform value="iOSDevice">False</Platform>
-                <Platform value="iOSSimulator">False</Platform>
-                <Platform value="OSX32">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>
