@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{359BCECE-26DC-4FA6-9F1D-53FB6A43E1F9}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="pubsubChimera.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="test\pubsubChatServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="test\SimpleTest.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="pubsubChimera">
+        <MSBuild Projects="pubsubChimera.dproj"/>
+    </Target>
+    <Target Name="pubsubChimera:Clean">
+        <MSBuild Projects="pubsubChimera.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pubsubChimera:Make">
+        <MSBuild Projects="pubsubChimera.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="pubsubChatServer">
+        <MSBuild Projects="test\pubsubChatServer.dproj"/>
+    </Target>
+    <Target Name="pubsubChatServer:Clean">
+        <MSBuild Projects="test\pubsubChatServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="pubsubChatServer:Make">
+        <MSBuild Projects="test\pubsubChatServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SimpleTest">
+        <MSBuild Projects="test\SimpleTest.dproj"/>
+    </Target>
+    <Target Name="SimpleTest:Clean">
+        <MSBuild Projects="test\SimpleTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SimpleTest:Make">
+        <MSBuild Projects="test\SimpleTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="pubsubChimera;pubsubChatServer;SimpleTest"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="pubsubChimera:Clean;pubsubChatServer:Clean;SimpleTest:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="pubsubChimera:Make;pubsubChatServer:Make;SimpleTest:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
