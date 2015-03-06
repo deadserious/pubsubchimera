@@ -168,8 +168,17 @@ begin
 end;
 
 function TPubSubHTTPServer.ParseMessage(Request : TIdHTTPRequestInfo): IJSONObject;
+var
+  sContent : UTF8String;
 begin
-  Result := JSON(Request.UnparsedParams);
+  if Request.PostStream <> nil then
+  begin
+    SetLength(sContent, Request.PostStream.Size);
+    Request.PostStream.Read(sContent[1],Request.PostStream.Size);
+    Result := JSON(sContent);
+  end else
+    Result := JSON(Request.UnparsedParams);
+
   if Assigned(FOnParseMessage) then
     FOnParseMessage(Self, Request, Result);
 end;
