@@ -149,7 +149,7 @@ begin
     FOnParseChannel(Self, Dispatcher.Request, Result);
 end;
 
-function TPubSubProducer.ParseMessage: IJSONObject;
+function TPubSubProducer.ParseMessage : IJSONObject;
 begin
   Result := JSON(Dispatcher.Request.Content);
   if Assigned(FOnParseMessage) then
