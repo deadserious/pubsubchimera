@@ -34,16 +34,20 @@ unit chimera.pubsub.producer;
 interface
 
 uses
-  System.SysUtils, System.Classes, Web.HTTPApp, chimera.json, chimera.pubsub.common;
+  System.SysUtils, System.Classes, Web.HTTPApp, chimera.json, chimera.pubsub.common,
+  chimera.pubsub;
 
 type
-  TSessionEvent = procedure(Sender : TObject; Request : TWebRequest; Response : TWebResponse; var SessionID : string) of object;
+  TIDEvent = procedure(Sender : TObject; Request : TWebRequest; Response : TWebResponse; var ID : string) of object;
   TPubSubAuthEvent = procedure(Sender : TObject; Request : TWebRequest; const channel : string; var Permitted : boolean) of object;
   TParseChannelEvent = procedure(Sender : TObject; Request : TWebRequest; var Value : string) of object;
   TParseDataEvent = procedure(Sender : TObject; Request : TWebRequest; var Value : IJSONObject) of object;
   TPubSubProducer = class(TCustomContentProducer)
+  strict private
+    class var FPubSub : TPubSub<IJSONObject>;
   private
-    FOnSession: TSessionEvent;
+    FOnSession: TIDEvent;
+    FOnGetID : TIDEvent;
     FOnCanSubscribe: TPubSubAuthEvent;
     FOnCanPublish: TPubSubAuthEvent;
     FOnParseMessage: TParseDataEvent;
@@ -54,23 +58,24 @@ type
     function ParseMessage : IJSONObject; virtual;
     function CanPublish : boolean;
     function CanSubscribe : boolean;
+    function DoGetID : string;
   public
     constructor Create(AOwner: TComponent); override;
     function Content: string; override;
+    class function PubSub : TPubSub<IJSONObject>;
   published
     property Timeout : integer read FTimeout write FTimeout default -1;
-    property OnSession : TSessionEvent read FOnSession write FOnSession;
+    property OnSession : TIDEvent read FOnSession write FOnSession;
     property OnCanSubscribe : TPubSubAuthEvent read FOnCanSubscribe write FOnCanSubscribe;
     property OnCanPublish : TPubSubAuthEvent read FOnCanPublish write FOnCanPublish;
     property OnParseChannel : TParseChannelEvent read FOnParseChannel write FOnParseChannel;
     property OnParseMessage : TParseDataEvent read FOnParseMessage write FOnParseMessage;
+    property OnGetID : TIDEvent read FOnGetID write FOnGetID;
   end;
 
 procedure Register;
 
 implementation
-
-uses chimera.pubsub;
 
 procedure Register;
 begin
@@ -104,7 +109,7 @@ begin
     TMethodType.mtPost,
     TMethodType.mtPut:
       if CanPublish then
-        TPubSub<IJSONObject>.Publish(ParseChannel, ParseMessage)
+        PubSub.Publish(ParseChannel, ParseMessage, DoGetID)
       else
         raise EPubSubSecurityException.Create(NOT_ALLOWED);
     TMethodType.mtGet:
@@ -117,7 +122,7 @@ begin
         begin
           // If a session is provided, then use queueing mechanism
           FOnSession(Self, Dispatcher.Request, Dispatcher.Response, sSession);
-          ary := TPubSub<IJSONObject>.ListenAndWait(ParseChannel, sSession, FTimeout);
+          ary := PubSub.ListenAndWait(ParseChannel, sSession, FTimeout, DoGetID);
           for i := 0 to length(ary)-1 do
           begin
             jsa.Add(ary[i]);
@@ -125,7 +130,7 @@ begin
         end else
         begin
           // If no session provided, just wait for next message
-          jsa.Add(TPubSub<IJSONObject>.ListenAndWait(ParseChannel, FTimeout));
+          jsa.Add(PubSub.ListenAndWait(ParseChannel, FTimeout, DoGetID));
         end;
         Result := jsa.AsJSON;
         Dispatcher.Response.ContentType := 'application/json';
@@ -142,6 +147,13 @@ begin
   FTimeout := -1;
 end;
 
+function TPubSubProducer.DoGetID: string;
+begin
+  Result := '';
+  if Assigned(FOnGetID) then
+    FOnGetID(Self, Dispatcher.Request, Dispatcher.Response, Result);
+end;
+
 function TPubSubProducer.ParseChannel: string;
 begin
   Result := Dispatcher.Request.PathInfo;
@@ -154,6 +166,13 @@ begin
   Result := JSON(Dispatcher.Request.Content);
   if Assigned(FOnParseMessage) then
     FOnParseMessage(Self, Dispatcher.Request, Result);
+end;
+
+class function TPubSubProducer.PubSub: TPubSub<IJSONObject>;
+begin
+  if not Assigned(FPubSub) then
+    FPubSub := TPubSub<IJSONObject>.Create;
+  Result := FPubSub;
 end;
 
 end.

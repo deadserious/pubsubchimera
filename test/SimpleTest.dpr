@@ -13,7 +13,7 @@ begin
     { TODO -oUser -cConsole Main : Insert code here }
     TestPubSub;
     TestListenWait;
-    TestQueue;
+    //TestPipe;
     ReadLn;
   except
     on E: Exception do

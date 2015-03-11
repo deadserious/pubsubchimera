@@ -34,22 +34,25 @@ unit chimera.pubsub.server.idhttp;
 interface
 
 uses System.SysUtils, System.Classes, chimera.json, IdCustomHTTPServer, IdContext,
-  chimera.pubsub.common;
+  chimera.pubsub.common, chimera.pubsub;
 
 type
-  TSessionEvent = procedure(Sender : TObject; Request : TIdHTTPRequestInfo; Response : TIdHTTPResponseInfo; var SessionID : string) of object;
+  TIDEvent = procedure(Sender : TObject; Request : TIdHTTPRequestInfo; Response : TIdHTTPResponseInfo; var ID : string) of object;
   TPubSubAuthEvent = procedure(Sender : TObject; Request : TIdHTTPRequestInfo; const channel : string; var Permitted : boolean) of object;
   TParseDataEvent = procedure(Sender : TObject; Request : TIdHTTPRequestInfo; var Value : IJSONObject) of object;
   TParseChannelEvent = procedure(Sender : TObject; Request : TIdHTTPRequestInfo; var Value : string) of object;
 
   TPubSubHTTPServer = class(TIdCustomHTTPServer)
   private
-    FOnSession: TSessionEvent;
+    FPubSub : TPubSub<IJSONObject>;
+    FOnSession: TIDEvent;
     FOnCanSubscribe: TPubSubAuthEvent;
     FOnParseMessage: TParseDataEvent;
     FTimeout: integer;
     FOnParseChannel: TParseChannelEvent;
     FOnCanPublish: TPubSubAuthEvent;
+    FOnGetID: TIDEvent;
+    function DoGetID(Request : TIdHTTPRequestInfo; Response : TIdHTTPResponseInfo) : string;
   protected
     function ParseChannel(Request : TIdHTTPRequestInfo) : string; virtual;
     function ParseMessage(Request : TIdHTTPRequestInfo) : IJSONObject; virtual;
@@ -62,9 +65,11 @@ type
   public
     procedure InitComponent; override;
     destructor Destroy; override;
+    function PubSub : TPubSub<IJSONObject>;
   published
     property Timeout : integer read FTimeout write FTimeout default -1;
-    property OnSession : TSessionEvent read FOnSession write FOnSession;
+    property OnSession : TIDEvent read FOnSession write FOnSession;
+    property OnGetID : TIDEvent read FOnGetID write FOnGetID;
     property OnCanSubscribe : TPubSubAuthEvent read FOnCanSubscribe write FOnCanSubscribe;
     property OnCanPublish : TPubSubAuthEvent read FOnCanPublish write FOnCanPublish;
     property OnParseChannel : TParseChannelEvent read FOnParseChannel write FOnParseChannel;
@@ -75,8 +80,6 @@ type
 procedure Register;
 
 implementation
-
-uses chimera.pubsub;
 
 procedure Register;
 begin
@@ -101,7 +104,7 @@ end;
 
 destructor TPubSubHTTPServer.Destroy;
 begin
-
+  FPubSub.Free;
   inherited;
 end;
 
@@ -123,7 +126,7 @@ begin
     if ARequestInfo.CommandType in [THTTPCommandType.hcPOST, THTTPCommandType.hcPUT] then
     begin
       if CanPublish(ARequestInfo) then
-        TPubSub<IJSONObject>.Publish(ParseChannel(ARequestInfo), ParseMessage(ARequestInfo))
+        FPubSub.Publish(ParseChannel(ARequestInfo), ParseMessage(ARequestInfo), DoGetID(ARequestInfo, AResponseInfo))
       else
         raise EPubSubSecurityException.Create(NOT_ALLOWED);
     end else
@@ -136,7 +139,7 @@ begin
         begin
           // If a session is provided, then use queueing mechanism
           FOnSession(Self, ARequestInfo, AResponseInfo, sSession);
-          ary := TPubSub<IJSONObject>.ListenAndWait(ParseChannel(ARequestInfo), sSession, FTimeout);
+          ary := FPubSub.ListenAndWait(ParseChannel(ARequestInfo), sSession, FTimeout, DoGetID(ARequestInfo, AResponseInfo));
           for i := 0 to length(ary)-1 do
           begin
             jsa.Add(ary[i]);
@@ -144,7 +147,7 @@ begin
         end else
         begin
           // If no session provided, just wait for next message
-          jsa.Add(TPubSub<IJSONObject>.ListenAndWait(ParseChannel(ARequestInfo), FTimeout));
+          jsa.Add(FPubSub.ListenAndWait(ParseChannel(ARequestInfo), DoGetID(ARequestInfo, AResponseInfo), FTimeout));
         end;
       end else
         raise EPubSubSecurityException.Create(NOT_ALLOWED);
@@ -154,10 +157,18 @@ begin
   end;
 end;
 
+function TPubSubHTTPServer.DoGetID(Request : TIdHTTPRequestInfo; Response : TIdHTTPREsponseInfo): string;
+begin
+  Result := '';
+  if Assigned(FOnGetID) then
+    FOnGetID(Self, Request, Response, Result);
+end;
+
 procedure TPubSubHTTPServer.InitComponent;
 begin
   inherited;
   FTimeout := -1;
+  FPubSub := TPubSub<IJSONObject>.Create;
 end;
 
 function TPubSubHTTPServer.ParseChannel(Request : TIdHTTPRequestInfo): string;
@@ -181,6 +192,13 @@ begin
 
   if Assigned(FOnParseMessage) then
     FOnParseMessage(Self, Request, Result);
+end;
+
+function TPubSubHTTPServer.PubSub: TPubSub<IJSONObject>;
+begin
+  if not Assigned(FPubSub) then
+    FPubSub := TPubSub<IJSONObject>.Create;
+  Result := FPubSub;
 end;
 
 end.

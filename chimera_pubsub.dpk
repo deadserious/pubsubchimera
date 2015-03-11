@@ -32,12 +32,15 @@ requires
   inet,
   IndySystem,
   IndyProtocols,
-  IndyCore;
+  IndyCore,
+  chimera_json;
 
 contains
   chimera.pubsub in 'chimera.pubsub.pas',
   chimera.pubsub.producer in 'chimera.pubsub.producer.pas',
   chimera.pubsub.server.idhttp in 'chimera.pubsub.server.idhttp.pas',
-  chimera.pubsub.common in 'chimera.pubsub.common.pas';
+  chimera.pubsub.common in 'chimera.pubsub.common.pas',
+  chimera.pubsub.client.idhttp in 'chimera.pubsub.client.idhttp.pas';
 
 end.
+

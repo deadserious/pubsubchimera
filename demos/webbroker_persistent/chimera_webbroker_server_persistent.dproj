@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{2C7C2F0F-4B62-47AB-960F-884AF712161A}</ProjectGuid>
+        <ProjectGuid>{6EDDEC0E-7A56-44F7-91DC-17B11009F2AD}</ProjectGuid>
         <ProjectVersion>15.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
-        <MainSource>pubsubChatServer.dpr</MainSource>
+        <MainSource>chimera_webbroker_server_persistent.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -41,10 +41,10 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_UnitSearchPath>..\;json;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\..\..\json;..\..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <SanitizedProjectName>pubsubChatServer</SanitizedProjectName>
+        <SanitizedProjectName>chimera_webbroker_server_persistent</SanitizedProjectName>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
@@ -59,7 +59,6 @@
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <DCC_UsePackage>Olaf;JvGlobus;FECCardReaderD2007;JvMM;JvManagedThreads;rbRTL1520;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;ideal.fmx;DBXSqliteDriver;FireDACPgDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;TeeDB;tethering;rbDAD1520;dclRBADO1520;rbTDBC1520;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;JvNet;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;dclRBIBE1520;dbxcds;DatasnapConnectorsFreePascal;MetropolisUILiveTile;JvXPCtrls;SynEdit_RXE6;ISSUtilitiesXE6;rbIDE1520;vcldb;rbRIDE1520;vcldsnap;rbDB1520;fmxFireDAC;rbRCL1520;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;JvCore;rbFireDAC1520;vclribbon;rbDIDE1520;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DCEF_XE5;MissingStyles;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;CodeSiteExpressPkg;tmsxlsdXE6;VirtualDBTreeEx_XE6;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;inetdbxpress;WACEF;dsnapxml;tmsdXE6;FireDACInfxDriver;FireDACDb2Driver;JclDeveloperTools;JvDocking;adortl;dclRBFireDAC1520;rbADO1520;JvWizards;FireDACASADriver;FIBPlus_XE4;JvHMI;rbBDE1520;ISSSQLUtilsFireDACXE6;bindcompfmx;JvBands;vcldbx;rbDBE1520;FireDACODBCDriver;RESTBackendComponents;rbRAP1520;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;JvPluginSystem;Tee;JclContainers;rbIBE1520;DBXOdbcDriver;acQueryBuilderFireDACD19;vclFireDAC;JvCmp;dclRBBDE1520;JvSystem;xmlrtl;DataSnapNativeClient;svnui;ibxpress;JvControls;JvTimeFramework;rbDBDE1520;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;rb;tmswizdXE6;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvJans;JvPrintPreview;JvPageComps;FECPersonPanel;FireDACADSDriver;vcltouch;rbTCUI1520;dclRBE1520;dclRBDBE1520;IdealFECButtonPkg;VclSmp;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;ISSFormsXE6;inet;rbCIDE1520;fmxobj;JclVcl;FireDACMySQLDriver;soapmidas;vclx;tmsexdXE6;rbTC1520;svn;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;acQueryBuilderDsgnFireDACD19;dbisamr;bdertl;VirtualTreesR;edbrun;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
@@ -75,7 +74,6 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
@@ -89,14 +87,19 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="chimera.pubsub.test.form.pas">
+        <DCCReference Include="..\webbroker\chimera.pubsub.test.form.pas">
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="chimera.pubsub.test.module.pas">
+        <DCCReference Include="..\webbroker\chimera.pubsub.test.module.pas">
             <Form>WebModule1</Form>
             <FormType>dfm</FormType>
             <DesignClass>TWebModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="chimera.pubsub.test.data.pas">
+            <Form>DataModule1</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -116,36 +119,42 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">pubsubChatServer.dpr</Source>
+                    <Source Name="MainSource">chimera_webbroker_server_persistent.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclVcl200.bpl">JEDI Code Library VCL package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\WINDOWS\SYSTEM32\rbDIDE1520.bpl">ReportBuilder DADE - IDE</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclDeveloperTools200.bpl">JEDI Code Library Developer Tools package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclContainers200.bpl">JEDI Code Library Containers package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\Jcl200.bpl">JEDI Code Library RTL package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclVcl200.bpl">JEDI Code Library VCL package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvCore200.bpl">JVCL Core Components Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvHMI200.bpl">JVCL HMI Controls Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvManagedThreads200.bpl">JVCL Managed Threads Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvBands200.bpl">JVCL Band Objects Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvSystem200.bpl">JVCL System Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvStdCtrls200.bpl">JVCL Standard Controls Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvControls200.bpl">JVCL Visual Controls Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvCmp200.bpl">JVCL Non-Visual Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvCustom200.bpl">JVCL Custom Controls Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvDlgs200.bpl">JVCL Dialog Components Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvCrypt200.bpl">JVCL Encryption and Compression Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvMM200.bpl">JVCL Multimedia and Image Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvNet200.bpl">JVCL Network Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvAppFrm200.bpl">JVCL Application and Form Components Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvBands200.bpl">JVCL Band Objects Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvJans200.bpl">JVCL Jans Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvGlobus200.bpl">JVCL Globus Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvPrintPreview200.bpl">JVCL Print Preview Components Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvPageComps200.bpl">JVCL Page Style Components Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvTimeFramework200.bpl">JVCL Time Framework Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvHMI200.bpl">JVCL HMI Controls Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvManagedThreads200.bpl">JVCL Managed Threads Runtime Package</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvXPCtrls200.bpl">JVCL XP Controls Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\tmsdedXE6.bpl">TMS Component Pack design time support</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvCryptDesign200.bpl">JVCL Encryption and Compression</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvCrypt200.bpl">JVCL Encryption and Compression Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvJansDesign200.bpl">JVCL Jans Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvJans200.bpl">JVCL Jans Components Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvTimeFrameworkDesign200.bpl">JVCL Time Framework</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvTimeFramework200.bpl">JVCL Time Framework Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvDockingDesign200.bpl">JVCL Docking Components</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvDocking200.bpl">JVCL Docking Components Runtime Package</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvRuntimeDesignDesign200.bpl">JVCL Runtime Design Components</Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JvRuntimeDesign200.bpl">JVCL Runtime Design Components Runtime Package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclDeveloperTools200.bpl">JEDI Code Library Developer Tools package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclContainers200.bpl">JEDI Code Library Containers package</Excluded_Packages>
-                    <Excluded_Packages Name="C:\WINDOWS\SYSTEM32\rbDIDE1520.bpl">ReportBuilder DADE - IDE</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k200.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp200.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k200.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>

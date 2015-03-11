@@ -15,6 +15,7 @@ object WebModule1: TWebModule1
   Height = 230
   Width = 415
   object PubSubProducer1: TPubSubProducer
+    OnSession = PubSubProducer1Session
     Left = 192
     Top = 96
   end

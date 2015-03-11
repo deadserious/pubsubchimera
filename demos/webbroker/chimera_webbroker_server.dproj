@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{94F3454C-8ACD-41DC-97B5-6DEE5A41E4AB}</ProjectGuid>
+        <ProjectGuid>{2C7C2F0F-4B62-47AB-960F-884AF712161A}</ProjectGuid>
         <ProjectVersion>15.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
-        <MainSource>chimera_idhttp_server.dpr</MainSource>
+        <MainSource>chimera_webbroker_server.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -40,11 +40,15 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <SanitizedProjectName>chimera_idhttp_server</SanitizedProjectName>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UnitSearchPath>..\..\..\json;..\..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <SanitizedProjectName>chimera_webbroker_server</SanitizedProjectName>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_ExeOutput>.\</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
         <DCC_S>false</DCC_S>
@@ -52,11 +56,10 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <DCC_UsePackage>Olaf;JvGlobus;FECCardReaderD2007;JvMM;JvManagedThreads;rbRTL1520;FireDACSqliteDriver;cc.buttons;FireDACDSDriver;ideal.fmx;DBXSqliteDriver;FireDACPgDriver;fmx;fgx;JvDlgs;IndySystem;JvCrypt;TeeDB;tethering;rbDAD1520;dclRBADO1520;rbTDBC1520;inetdbbde;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;JvNet;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;dclRBIBE1520;dbxcds;DatasnapConnectorsFreePascal;MetropolisUILiveTile;JvXPCtrls;SynEdit_RXE6;ISSUtilitiesXE6;rbIDE1520;vcldb;rbRIDE1520;vcldsnap;rbDB1520;fmxFireDAC;rbRCL1520;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;JvCore;rbFireDAC1520;vclribbon;rbDIDE1520;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DCEF_XE5;MissingStyles;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;CodeSiteExpressPkg;tmsxlsdXE6;VirtualDBTreeEx_XE6;DataSnapFireDAC;FireDACDBXDriver;JvAppFrm;soapserver;JvRuntimeDesign;JvDB;inetdbxpress;WACEF;dsnapxml;tmsdXE6;FireDACInfxDriver;FireDACDb2Driver;JclDeveloperTools;JvDocking;adortl;dclRBFireDAC1520;rbADO1520;JvWizards;FireDACASADriver;FIBPlus_XE4;JvHMI;rbBDE1520;ISSSQLUtilsFireDACXE6;bindcompfmx;JvBands;vcldbx;rbDBE1520;FireDACODBCDriver;RESTBackendComponents;rbRAP1520;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;JvPluginSystem;Tee;JclContainers;rbIBE1520;DBXOdbcDriver;acQueryBuilderFireDACD19;vclFireDAC;JvCmp;dclRBBDE1520;JvSystem;xmlrtl;DataSnapNativeClient;svnui;ibxpress;JvControls;JvTimeFramework;rbDBDE1520;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;rb;tmswizdXE6;bindcompdbx;bindengine;vclactnband;soaprtl;FMXTee;TeeUI;bindcompvcl;JvStdCtrls;JvCustom;Jcl;vclie;JvJans;JvPrintPreview;JvPageComps;FECPersonPanel;FireDACADSDriver;vcltouch;rbTCUI1520;dclRBE1520;dclRBDBE1520;IdealFECButtonPkg;VclSmp;FireDACMSSQLDriver;FireDAC;DBXInformixDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;ISSFormsXE6;inet;rbCIDE1520;fmxobj;JclVcl;FireDACMySQLDriver;soapmidas;vclx;tmsexdXE6;rbTC1520;svn;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;acQueryBuilderDsgnFireDACD19;dbisamr;bdertl;VirtualTreesR;edbrun;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
@@ -71,10 +74,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <DCC_ExeOutput>.\</DCC_ExeOutput>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UnitSearchPath>..\..\;..\..\..\json;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -87,9 +87,14 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="chimera.pubsub.demos.idhttp.form.pas">
+        <DCCReference Include="chimera.pubsub.test.form.pas">
             <Form>Form1</Form>
             <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="chimera.pubsub.test.module.pas">
+            <Form>WebModule1</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TWebModule</DesignClass>
         </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -109,7 +114,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">chimera_idhttp_server.dpr</Source>
+                    <Source Name="MainSource">chimera_webbroker_server.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\14.0\Bpl\JclVcl200.bpl">JEDI Code Library VCL package</Excluded_Packages>

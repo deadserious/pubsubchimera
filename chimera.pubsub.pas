@@ -37,218 +37,170 @@ uses System.SysUtils, System.Classes, System.Generics.Collections,
   System.SyncObjs;
 
 type
-  IMessage = interface
-    function GetName : string;
-    procedure SetName(const Value : string);
-    function GetContentType : string;
-    procedure SetContentType(const Value : string);
-    function GetAsString : string;
-    procedure SetAsString(const Value : string);
-    function GetAsStream : TStream;
-    procedure SetAsStream(const Value : TStream);
-
-    property AsString : string read GetAsString write SetAsString;
-    property AsStream : TStream read GetAsStream write SetAsStream;
-    property Name : string read GetName write SetName;
-    property ContentType : string read GetContentType write SetContentType;
-
-    function Initialize(Name : string; Content : string; ContentType : string = '') : IMessage; overload;
-    function Initialize(Name : string; Content : TStream; ContentType : string = '') : IMessage; overload;
-  end;
-
   TMessageHandler<T> = reference to procedure(const Msg : T);
 
-  TPubSub<T> = class
-  strict private type
-    TMessages<T> = class(TObject)
-    strict private type
-      TEventQueue<T> = class(TQueue<T>)
-      public
-        Event : TEvent;
-        constructor Create;
-        destructor Destroy; override;
-      end;
-    private
-      FSubscriptions : TList<TMessageHandler<T>>;
-      FQueues : TDictionary<string, TEventQueue<T>>;
-    public
-      constructor Create;
-      destructor Destroy; override;
-      procedure Subscribe(Handler : TMessageHandler<T>);
-      procedure Unsubscribe(Handler : TMessageHandler<T>);
-      procedure Publish(const Msg : T);
-      function BeginQueue(const Queue : string) : TEventQueue<T>;
-      function EndQueue(const Queue : string) : TArray<T>;
-      function WaitOnQueue(const Queue : string; Timeout : integer) : TArray<T>;
-    end;
-  strict private class var
-    FChannels : TDictionary<string,TMessages<T>>;
-  strict private
-    class function Lookup(const Channel : string) : TMessages<T>;
-  public
-    class constructor Create;
-    class destructor Destroy;
-    class procedure Subscribe(const Channel : string; Handler : TMessageHandler<T>);
-    class procedure Unsubscribe(const Channel : string; Handler : TMessageHandler<T>);
-    class function ListenAndWait(const Channel : string; Timeout : integer = -1) : T; overload;
-    class function ListenAndWait(const Channel : string; const Queue : string; Timeout : integer = -1) : TArray<T>; overload;
-    class procedure BeginQueue(const Channel : string; const Queue : string);
-    class function EndQueue(const Channel : string; const Queue : string) : TArray<T>;
-    class procedure Publish(const Channel : string; const Msg : T);
+  IChannel<T> = interface(IInterface)
+      function GetName : string;
+
+      procedure Subscribe(Handler : TMessageHandler<T>; const ID : string = '');
+      procedure Unsubscribe(Handler : TMessageHandler<T>; const ID : string = '');
+      procedure Publish(const Msg : T; const ID : string = '');
+      procedure BeginContext(const Context : string; const ID : string = ''); overload;
+      procedure BeginContext(const Context : string; const Prefill : TArray<T>; const ID : string = ''); overload;
+      function BeginAndGetContext(const Context : string; const ID : string = '') : TQueue<T>; overload;
+      function BeginAndGetContext(const Context : string; const Prefill : TArray<T>; const ID : string = '') : TQueue<T>; overload;
+      function EndContext(const Context : string) : TArray<T>;
+      function WaitOnContext(const Context : string; Timeout : integer; const ID : string = '') : TArray<T>;
+      //procedure LoadContext(const Context : String; const Data : TArray<T>; const ID : string = ''); overload;
+      //procedure LoadContext(const Context : String; const Data : T; const ID : string = ''); overload;
+
+      property Name : string read GetName;
   end;
 
-  TMessageHandler = TMessageHandler<IMessage>;
-  TPubSub = class(TPubSub<IMessage>)
+  TCreateChannelHandler<T> = reference to function(const Channel : string) : IChannel<T>;
+  TContextHandler<T> = reference to procedure(const channel : IChannel<T>; const Context : String; Queue : TQueue<T>);
+  TDataHandler<T> = reference to procedure(const channel : IChannel<T>; const Context : string; Data : T );
+
+  TPubSub<T> = class(TObject)
+  strict private type
+    TChannel<T> = class(TInterfacedObject, IChannel<T>)
+    strict private type
+      TDataContext<T> = class(TQueue<T>)
+      private
+        FEvent : TEvent;
+        function GetEvent : TEvent;
+        function GetCount : integer;
+      protected
+      public
+        constructor Create;
+        destructor Destroy; override;
+        property Event : TEvent read GetEvent;
+      end;
+    private
+      FName : string;
+      FOwner : TPubSub<T>;
+      FSubscriptions : TList<TMessageHandler<T>>;
+      FContexts : TDictionary<string, TDataContext<T>>;
+    public
+      constructor Create(Owner : TPubSub<T>; const Name : String);
+      destructor Destroy; override;
+      function GetName : string;
+      procedure Subscribe(Handler : TMessageHandler<T>; const ID : string = '');
+      procedure Unsubscribe(Handler : TMessageHandler<T>; const ID : string = '');
+      procedure Publish(const Msg : T; const ID : string = '');
+      procedure BeginContext(const Context : string; const ID : string = ''); overload;
+      procedure BeginContext(const Context : string; const Prefill : TArray<T>; const ID : string = ''); overload;
+      function BeginAndGetContext(const Context : string; const ID : string = '') : TQueue<T>; overload;
+      function BeginAndGetContext(const Context : string; const Prefill : TArray<T>; const ID : string = '') : TQueue<T>; overload;
+      function EndContext(const Context : string) : TArray<T>;
+      function WaitOnContext(const Context : string; Timeout : integer = -1; const ID : string = '') : TArray<T>;
+      //procedure LoadContext(const Context : String; const Data : TArray<T>; const ID : string = ''); overload;
+      //procedure LoadContext(const Context : String; const Data : T; const ID : string = ''); overload;
+
+      property Name : string read GetName;
+    end;
+  strict private
+    FChannels : TDictionary<string,IChannel<T>>;
+    FOnCreateChannel: TCreateChannelHandler<T>;
+    FOnReloadContext: TContextHandler<T>;
+    FOnClearMessage: TDataHandler<T>;
+    FOnStoreMessage: TDataHandler<T>;
+
+    function Lookup(const Channel : string) : IChannel<T>;
+
+  private
+    function DoCreateChannel(const Channel : string) : IChannel<T>;
+    procedure DoReloadContext(const channel : IChannel<T>; const Context : String; Queue : TQueue<T>);
+    procedure DoStoreMessage(const channel : IChannel<T>; const Context : string; Data : T );
+    procedure DoClearMessage(const channel : IChannel<T>; const Context : string; Data : T );
   public
-    class function NewMessage : IMessage;
+    constructor Create; virtual;
+    destructor Destroy; override;
+    procedure Subscribe(const Channel : string; Handler : TMessageHandler<T>; const ID : string = ''); virtual;
+    procedure Unsubscribe(const Channel : string; Handler : TMessageHandler<T>; const ID : string = ''); virtual;
+    function ListenAndWait(const Channel : string; Timeout : integer = -1; const ID : string = '') : T; overload;  virtual;
+    function ListenAndWait(const Channel : string; const Context : string; Timeout : integer = -1; const ID : string = '') : TArray<T>; overload;  virtual;
+    procedure BeginContext(const Channel : string; const Context : string); virtual;
+    function EndContext(const Channel : string; const Context : string) : TArray<T>; virtual;
+    procedure Publish(const Channel : string; const Msg : T; const ID : string = ''); virtual;
+
+    property OnCreateChannel : TCreateChannelHandler<T> read FOnCreateChannel write FOnCreateChannel;
+    property OnReloadContext : TContextHandler<T> read FOnReloadContext write FOnReloadContext;
+    property OnStoreMessage : TDataHandler<T> read FOnStoreMessage write FOnStoreMessage;
+    property OnClearMessage : TDataHandler<T> read FOnClearMessage write FOnClearMessage;
   end;
 
 implementation
 
-type
-  TMessage = class(TInterfacedObject, IMessage)
-  private
-    FData : TStream;
-    FContentType: string;
-    FName: string;
-    function GetName : string;
-    procedure SetName(const Value : string);
-    function GetContentType : string;
-    procedure SetContentType(const Value : string);
-    function GetAsString : string;
-    procedure SetAsString(const Value : string);
-    function GetAsStream : TStream;
-    procedure SetAsStream(const Value : TStream);
-  public
-    constructor Create;
-    destructor Destroy; override;
-
-    property AsString : string read GetAsString write SetAsString;
-    property AsStream : TStream read GetAsStream write SetAsStream;
-    property Name : string read GetName write SetName;
-    property ContentType : string read GetContentType write SetContentType;
-
-    function Initialize(Name : string; Content : string; ContentType : string = '') : IMessage; overload;
-    function Initialize(Name : string; Content : TStream; ContentType : string = '') : IMessage; overload;
-  end;
-
-{ TPubSub }
-
-class function TPubSub.NewMessage: IMessage;
-begin
-  Result := TMessage.Create;
-end;
-
-{ TMessage }
-
-constructor TMessage.Create;
-begin
-  inherited Create;
-  FData := TStringStream.Create;
-end;
-
-destructor TMessage.Destroy;
-begin
-  FData.Free;
-  inherited;
-end;
-
-function TMessage.GetAsStream: TStream;
-begin
-  Result := FData;
-end;
-
-function TMessage.GetAsString: string;
-begin
-  Result := TStringStream(FData).DataString;
-end;
-
-function TMessage.GetContentType: string;
-begin
-  Result := FContentType;
-end;
-
-function TMessage.GetName: string;
-begin
-  Result := FName;
-end;
-
-function TMessage.Initialize(Name: string; Content: TStream;
-  ContentType: string): IMessage;
-begin
-  FName := Name;
-  FContentType := ContentType;
-  FData.CopyFrom(Content, Content.Size-Content.Position);
-  Result := Self;
-end;
-
-function TMessage.Initialize(Name, Content, ContentType: string): IMessage;
-begin
-  FName := Name;
-  FContentType := ContentType;
-  TStringStream(FData).WriteString(Content);
-  Result := Self;
-end;
-
-procedure TMessage.SetAsStream(const Value: TStream);
-begin
-  FData.Size := 0;
-  Value.Position := 0;
-  FData.CopyFrom(Value,Value.Size);
-end;
-
-procedure TMessage.SetAsString(const Value: string);
-begin
-  FData.Size := 0;
-  TStringStream(FData).WriteString(Value);
-end;
-
-procedure TMessage.SetContentType(const Value: string);
-begin
-  FContentType := Value;
-end;
-
-procedure TMessage.SetName(const Value: string);
-begin
-  FName := Value;
-end;
-
 { TPubSub<T> }
 
-class procedure TPubSub<T>.BeginQueue(const Channel, Queue: string);
-begin
-  Lookup(Channel).BeginQueue(Queue);
-end;
-
-class constructor TPubSub<T>.Create;
-begin
-  FChannels := TDictionary<string, TMessages<T>>.Create;
-end;
-
-class destructor TPubSub<T>.Destroy;
+procedure TPubSub<T>.BeginContext(const Channel, Context: string);
 var
-  c: TPair<string, TMessages<T>>;
+  chnl : IChannel<T>;
+begin
+  chnl := Lookup(Channel);
+  chnl.BeginAndGetContext(Context);
+end;
+
+constructor TPubSub<T>.Create;
+begin
+  inherited Create;
+  FChannels := TDictionary<string, IChannel<T>>.Create;
+  FOnCreateChannel :=
+    function(const Name : string) : IChannel<T>
+    begin
+      Result := TChannel<T>.Create(Self, Name);
+    end;
+end;
+
+destructor TPubSub<T>.Destroy;
+var
+  c: TPair<string, IChannel<T>>;
 begin
   TMonitor.Enter(FChannels);
   try
-    for c in FChannels do
-    begin
-      c.Value.Free;
-    end;
     FChannels.Clear;
   finally
     TMonitor.Exit(FChannels);
   end;
   FChannels.Free;
+  inherited Destroy;
 end;
 
-class function TPubSub<T>.EndQueue(const Channel, Queue: string): TArray<T>;
+procedure TPubSub<T>.DoClearMessage(const channel: IChannel<T>;
+  const Context: string; Data: T);
 begin
-  Result := Lookup(Channel).EndQueue(Queue);
+  if Assigned(FOnClearMessage) then
+    FOnClearMessage(channel, Context, Data);
 end;
 
-class function TPubSub<T>.ListenAndWait(const Channel: string;
-  Timeout: integer): T;
+function TPubSub<T>.DoCreateChannel(const Channel: string): IChannel<T>;
+begin
+  if Assigned(FOnCreateChannel) then
+    Result := FOnCreateChannel(channel)
+  else
+    Result := nil;
+end;
+
+procedure TPubSub<T>.DoReloadContext(const channel : IChannel<T>; const Context : String; Queue : TQueue<T>);
+begin
+  if Assigned(FOnReloadContext) then
+    FOnReloadContext(channel, Context, Queue);
+end;
+
+procedure TPubSub<T>.DoStoreMessage(const channel: IChannel<T>;
+  const Context: string; Data: T);
+begin
+  if Assigned(FOnStoreMessage) then
+    FOnStoreMessage(Channel, Context, Data);
+end;
+
+function TPubSub<T>.EndContext(const Channel, Context: string): TArray<T>;
+begin
+  Result := Lookup(Channel).EndContext(Context);
+end;
+
+function TPubSub<T>.ListenAndWait(const Channel: string; Timeout: integer = -1; const ID : string = ''): T;
 var
   event : TEvent;
   msgResult : T;
@@ -261,7 +213,7 @@ begin
         MsgResult := Msg;
         event.SetEvent;
       end
-    );
+    , ID);
     if event.WaitFor(Timeout) = TWaitResult.wrSignaled then
     begin
       result := msgResult;
@@ -272,19 +224,18 @@ begin
   end;
 end;
 
-class function TPubSub<T>.ListenAndWait(const Channel, Queue: string;
-  Timeout: integer): TArray<T>;
+function TPubSub<T>.ListenAndWait(const Channel, Context: string; Timeout: integer = -1; const ID : string = ''): TArray<T>;
 begin
-  Result := Lookup(Channel).WaitOnQueue(Queue, Timeout);
+  Result := Lookup(Channel).WaitOnContext(Context, Timeout, ID);
 end;
 
-class function TPubSub<T>.Lookup(const Channel: string): TMessages<T>;
+function TPubSub<T>.Lookup(const Channel: string): IChannel<T>;
 begin
   TMonitor.Enter(FChannels);
   try
     if not FChannels.TryGetValue(Channel,Result) then
     begin
-      Result := TMessages<T>.Create;
+      Result := DoCreateChannel(Channel);
       FChannels.Add(Channel, Result);
     end;
   finally
@@ -292,61 +243,85 @@ begin
   end;
 end;
 
-class procedure TPubSub<T>.Publish(const Channel: string; const Msg: T);
+procedure TPubSub<T>.Publish(const Channel: string; const Msg: T; const ID : string = '');
 begin
-  Lookup(Channel).Publish(Msg);
+  Lookup(Channel).Publish(Msg, ID);
 end;
 
-class procedure TPubSub<T>.Subscribe(const Channel: string;
-  Handler: TMessageHandler<T>);
+procedure TPubSub<T>.Subscribe(const Channel: string; Handler: TMessageHandler<T>; const ID : string = '');
 begin
-  Lookup(Channel).Subscribe(Handler);
+  Lookup(Channel).Subscribe(Handler, ID);
 end;
 
-class procedure TPubSub<T>.Unsubscribe(const Channel: string;
-  Handler: TMessageHandler<T>);
+procedure TPubSub<T>.Unsubscribe(const Channel: string; Handler: TMessageHandler<T>; const ID : string = '');
 begin
-  Lookup(Channel).Unsubscribe(Handler);
+  Lookup(Channel).Unsubscribe(Handler, ID);
 end;
 
-{ TPubSub<T>.TMessages<T> }
+{ TPubSub<T>.TChannel<T> }
 
-function TPubSub<T>.TMessages<T>.BeginQueue(const Queue: string) : TEventQueue<T>;
+function TPubSub<T>.TChannel<T>.BeginAndGetContext(const Context: string; const Prefill : TArray<T>; const ID : string = '') : TQueue<T>;
+var
+  dc : TDataContext<T>;
 begin
-  TMonitor.Enter(FQueues);
+  TMonitor.Enter(FContexts);
   try
-    if not FQueues.TryGetValue(Queue, Result) then
+    if not FContexts.TryGetValue(Context, dc) then
     begin
-      Result := TEventQueue<T>.Create;
-      FQueues.Add(Queue, Result);
+      dc := TDataContext<T>.Create;
+      FContexts.Add(Context, dc);
+      FOwner.DoReloadContext(Self, Context, dc);
     end;
   finally
-    TMonitor.Exit(FQueues);
+    TMonitor.Exit(FContexts);
   end;
+  Result := dc;
 end;
 
-constructor TPubSub<T>.TMessages<T>.Create;
+function TPubSub<T>.TChannel<T>.BeginAndGetContext(const Context: string; const ID : string = '') : TQueue<T>;
+var
+  ary : TArray<T>;
 begin
-  FSubscriptions := TList<TMessageHandler<T>>.Create;
-  FQueues := TDictionary<string, TEventQueue<T>>.Create;
+  SetLength(ary,0);
+  Result := BeginAndGetContext(Context, ary, ID);
 end;
 
-destructor TPubSub<T>.TMessages<T>.Destroy;
+procedure TPubSub<T>.TChannel<T>.BeginContext(const Context, ID: string);
+begin
+  BeginAndGetContext(Context, ID);
+end;
+
+procedure TPubSub<T>.TChannel<T>.BeginContext(const Context: string;
+  const Prefill: TArray<T>; const ID: string);
+begin
+  BeginAndGetContext(Context, Prefill, ID);
+end;
+
+constructor TPubSub<T>.TChannel<T>.Create(Owner : TPubSub<T>; const Name : String);
+begin
+  inherited Create;
+  FName := Name;
+  FOwner := Owner;
+  FSubscriptions := TList<TMessageHandler<T>>.Create;
+  FContexts := TDictionary<string, TDataContext<T>>.Create;
+end;
+
+destructor TPubSub<T>.TChannel<T>.Destroy;
 begin
   FSubscriptions.Free;
-  FQueues.Free;
+  FContexts.Free;
   inherited;
 end;
 
-function TPubSub<T>.TMessages<T>.EndQueue(const Queue: string) : TArray<T>;
+function TPubSub<T>.TChannel<T>.EndContext(const Context: string) : TArray<T>;
 var
-  q : TEventQueue<T>;
+  q : TDataContext<T>;
   i: Integer;
 begin
   SetLength(Result,0);
-  TMonitor.Enter(FQueues);
+  TMonitor.Enter(FContexts);
   try
-    if FQueues.TryGetValue(Queue,q) then
+    if FContexts.TryGetValue(Context,q) then
     begin
       setLength(Result,q.Count);
       i := 0;
@@ -355,28 +330,69 @@ begin
         Result[i] := q.Dequeue;
         inc(i);
       end;
-      q.Free;
-      FQueues.Remove(Queue);
+      FContexts.Remove(Context);
     end;
   finally
-    TMonitor.Exit(FQueues);
+    TMonitor.Exit(FContexts);
   end;
 end;
 
-procedure TPubSub<T>.TMessages<T>.Publish(const Msg: T);
+function TPubSub<T>.TChannel<T>.GetName: string;
+begin
+  Result := FName;
+end;
+
+{procedure TPubSub<T>.TChannel<T>.LoadContext(const Context: String;
+  const Data: TArray<T>; const ID : string = '');
 var
-  h: TMessageHandler<T>;
-  p : TPair<string, TEventQueue<T>>;
+  cxt : TDataContext<T>;
+  p : TPair<string, TDataContext<T>>;
+  i : integer;
 begin
   TMonitor.Enter(Self);
   try
+    if not FContexts.TryGetValue(Context,cxt) then
+      BeginContext(Context, ID);
+
+    for p in FContexts do
+    begin
+      for i := 0 to length(Data) do
+        p.Value.Enqueue(Data[i]);
+      p.Value.Event.SetEvent;
+    end;
+  finally
+    TMonitor.Exit(Self);
+  end;
+
+end;
+
+procedure TPubSub<T>.TChannel<T>.LoadContext(const Context: String;
+  const Data: T; const ID : string = '');
+var
+  ary : TArray<T>;
+begin
+  SetLength(ary,1);
+  ary[0] := Data;
+  LoadContext(Context,ary,ID);
+end;}
+
+procedure TPubSub<T>.TChannel<T>.Publish(const Msg: T; const ID : string = '');
+var
+  h: TMessageHandler<T>;
+  p : TPair<string, TDataContext<T>>;
+begin
+  TMonitor.Enter(Self);
+  try
+    FOwner.DoStoreMessage(Self,'',Msg);
     for h in FSubscriptions do
     begin
       h(Msg);
     end;
-    for p in FQueues do
+    FOwner.DoClearMessage(Self,'',Msg);
+    for p in FContexts do
     begin
       p.Value.Enqueue(Msg);
+      FOwner.DoStoreMessage(Self,p.Key,Msg);
       p.Value.Event.SetEvent;
     end;
   finally
@@ -384,7 +400,7 @@ begin
   end;
 end;
 
-procedure TPubSub<T>.TMessages<T>.Subscribe(Handler: TMessageHandler<T>);
+procedure TPubSub<T>.TChannel<T>.Subscribe(Handler: TMessageHandler<T>; const ID : string = '');
 begin
   TMonitor.Enter(Self);
   try
@@ -394,7 +410,7 @@ begin
   end;
 end;
 
-procedure TPubSub<T>.TMessages<T>.Unsubscribe(Handler: TMessageHandler<T>);
+procedure TPubSub<T>.TChannel<T>.Unsubscribe(Handler: TMessageHandler<T>; const ID : string = '');
 begin
   TMonitor.Enter(Self);
   try
@@ -404,14 +420,13 @@ begin
   end;
 end;
 
-function TPubSub<T>.TMessages<T>.WaitOnQueue(const Queue: string;
-  Timeout: integer): TArray<T>;
+function TPubSub<T>.TChannel<T>.WaitOnContext(const Context: string; Timeout: integer = -1; const ID : string = ''): TArray<T>;
 var
-  q : TEventQueue<T>;
+  q : TDataContext<T>;
   cnt : Integer;
   i: Integer;
 begin
-  q := BeginQueue(Queue);
+  q := TDataContext<T>(BeginAndGetContext(Context));
   TMonitor.Enter(q);
   try
     cnt := q.Count;
@@ -430,6 +445,7 @@ begin
     while q.Count > 0 do
     begin
       Result[i] := q.Dequeue;
+      FOwner.DoClearMessage(Self, Context, Result[i]);
       inc(i);
     end;
   finally
@@ -437,18 +453,29 @@ begin
   end;
 end;
 
-{ TPubSub<T>.TMessages<T>.TEventQueue<T> }
+{ TPubSub<T>.TChannel<T>.TDataContext<T> }
 
-constructor TPubSub<T>.TMessages<T>.TEventQueue<T>.Create;
+constructor TPubSub<T>.TChannel<T>.TDataContext<T>.Create;
 begin
   inherited Create;
-  Event := TEvent.Create;
+  FEvent := TEvent.Create;
 end;
 
-destructor TPubSub<T>.TMessages<T>.TEventQueue<T>.Destroy;
+destructor TPubSub<T>.TChannel<T>.TDataContext<T>.Destroy;
 begin
-  Event.Free;
+  FEvent.Free;
   inherited;
 end;
+
+function TPubSub<T>.TChannel<T>.TDataContext<T>.GetCount: integer;
+begin
+  Result := inherited Count;
+end;
+
+function TPubSub<T>.TChannel<T>.TDataContext<T>.GetEvent: TEvent;
+begin
+  result := FEvent;
+end;
+
 
 end.

@@ -1,4 +1,4 @@
-program pubsubChatServer;
+program chimera_webbroker_server;
 {$APPTYPE GUI}
 
 uses

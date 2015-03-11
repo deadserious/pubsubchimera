@@ -3,13 +3,19 @@
         <ProjectGuid>{359BCECE-26DC-4FA6-9F1D-53FB6A43E1F9}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="pubsubChimera.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="test\pubsubChatServer.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="test\SimpleTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="chimera_pubsub.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="demos\webbroker_persistent\chimera_webbroker_server_persistent.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="demos\idhttpserver\chimera_idhttp_server.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="demos\idhttpclient\chimera_idhttp_client.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -20,24 +26,6 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="pubsubChimera">
-        <MSBuild Projects="pubsubChimera.dproj"/>
-    </Target>
-    <Target Name="pubsubChimera:Clean">
-        <MSBuild Projects="pubsubChimera.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="pubsubChimera:Make">
-        <MSBuild Projects="pubsubChimera.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="pubsubChatServer">
-        <MSBuild Projects="test\pubsubChatServer.dproj"/>
-    </Target>
-    <Target Name="pubsubChatServer:Clean">
-        <MSBuild Projects="test\pubsubChatServer.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="pubsubChatServer:Make">
-        <MSBuild Projects="test\pubsubChatServer.dproj" Targets="Make"/>
-    </Target>
     <Target Name="SimpleTest">
         <MSBuild Projects="test\SimpleTest.dproj"/>
     </Target>
@@ -47,14 +35,50 @@
     <Target Name="SimpleTest:Make">
         <MSBuild Projects="test\SimpleTest.dproj" Targets="Make"/>
     </Target>
+    <Target Name="chimera_pubsub">
+        <MSBuild Projects="chimera_pubsub.dproj"/>
+    </Target>
+    <Target Name="chimera_pubsub:Clean">
+        <MSBuild Projects="chimera_pubsub.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="chimera_pubsub:Make">
+        <MSBuild Projects="chimera_pubsub.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="chimera_webbroker_server_persistent">
+        <MSBuild Projects="demos\webbroker_persistent\chimera_webbroker_server_persistent.dproj"/>
+    </Target>
+    <Target Name="chimera_webbroker_server_persistent:Clean">
+        <MSBuild Projects="demos\webbroker_persistent\chimera_webbroker_server_persistent.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="chimera_webbroker_server_persistent:Make">
+        <MSBuild Projects="demos\webbroker_persistent\chimera_webbroker_server_persistent.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="chimera_idhttp_server">
+        <MSBuild Projects="demos\idhttpserver\chimera_idhttp_server.dproj"/>
+    </Target>
+    <Target Name="chimera_idhttp_server:Clean">
+        <MSBuild Projects="demos\idhttpserver\chimera_idhttp_server.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="chimera_idhttp_server:Make">
+        <MSBuild Projects="demos\idhttpserver\chimera_idhttp_server.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="chimera_idhttp_client">
+        <MSBuild Projects="demos\idhttpclient\chimera_idhttp_client.dproj"/>
+    </Target>
+    <Target Name="chimera_idhttp_client:Clean">
+        <MSBuild Projects="demos\idhttpclient\chimera_idhttp_client.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="chimera_idhttp_client:Make">
+        <MSBuild Projects="demos\idhttpclient\chimera_idhttp_client.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="pubsubChimera;pubsubChatServer;SimpleTest"/>
+        <CallTarget Targets="SimpleTest;chimera_pubsub;chimera_webbroker_server_persistent;chimera_idhttp_server;chimera_idhttp_client"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="pubsubChimera:Clean;pubsubChatServer:Clean;SimpleTest:Clean"/>
+        <CallTarget Targets="SimpleTest:Clean;chimera_pubsub:Clean;chimera_webbroker_server_persistent:Clean;chimera_idhttp_server:Clean;chimera_idhttp_client:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="pubsubChimera:Make;pubsubChatServer:Make;SimpleTest:Make"/>
+        <CallTarget Targets="SimpleTest:Make;chimera_pubsub:Make;chimera_webbroker_server_persistent:Make;chimera_idhttp_server:Make;chimera_idhttp_client:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
