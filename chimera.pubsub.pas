@@ -392,7 +392,8 @@ begin
     for p in FContexts do
     begin
       p.Value.Enqueue(Msg);
-      FOwner.DoStoreMessage(Self,p.Key,Msg);
+      if p.Key <> '' then
+        FOwner.DoStoreMessage(Self,p.Key,Msg);
       p.Value.Event.SetEvent;
     end;
   finally
